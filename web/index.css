@@ -1,0 +1,52 @@
+body {
+	font-family: sans-serif;
+	margin: 0;
+}
+
+html, body, #vcenter1 {
+	height: 100%;
+}
+
+#vcenter1 {
+	display: table;
+	width: 100%;
+}
+
+#vcenter2 {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+
+#vcenter3 {
+	display: inline-block;
+}
+
+#controls {
+	
+}
+
+#controls td {
+	padding: 5px;
+}
+
+.button {
+	padding: 40px;
+	background-color: #444;
+	color: white;
+	font-size: 30px;
+	text-align: center;
+	width: 30px;
+	cursor: default;
+	border-radius: 50%;
+}
+
+.button:hover {
+	background-color: #666;
+}
+
+.button:active {
+	background-color: #222;
+}
+
+
