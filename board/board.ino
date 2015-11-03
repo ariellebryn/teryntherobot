@@ -30,26 +30,39 @@ long currentBitOnCount;
 long currentBitOffCount;
 int bits;
 
-int ledPin = 0;
+int ledR = 9;
+int ledG = 10;
+int ledB = 11;
+
+int rCycle = 128;
+int gCycle = 255;
+int bCycle = 128;
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   Serial.println("ok");
-  
-  pinMode(ledPin, OUTPUT);
-  digitalWrite(ledPin, HIGH);
+
+  pinMode(ledR,   OUTPUT);
+  pinMode(ledG, OUTPUT);   
+  pinMode(ledB,  OUTPUT); 
+
 
   AFMS.begin();  // create with the default frequency 1.6KHz
-
-  analogWrite(2, 255);
-  analogWrite(3, 255);
-  analogWrite(4, 255);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   readInput();
+  analogWrite(ledR, rCycle);
+  analogWrite(ledG, gCycle);
+  analogWrite(ledB, bCycle);
+
+  rCycle = (rCycle + 2) % 256;
+  gCycle = (gCycle + 3) % 256;
+  bCycle = (bCycle + 1) % 256;
+
+  delay(10);
 }
 
 
