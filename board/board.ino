@@ -7,7 +7,7 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 
 Adafruit_DCMotor *motorA = AFMS.getMotor(1);
 Adafruit_DCMotor *motorB = AFMS.getMotor(2);
-int baseSpeed = 200;
+int baseSpeed = 140;
 
 #define inPin 3
 
@@ -30,41 +30,97 @@ long currentBitOnCount;
 long currentBitOffCount;
 int bits;
 
-int ledR = 9;
-int ledG = 10;
-int ledB = 11;
+int RED = 0;
+int GREEN = 1;
+int BLUE = 2;
+int YELLOW = 3;
 
-int rCycle = 128;
-int gCycle = 255;
-int bCycle = 128;
+int numLeds = 4;
+int leds[] = {9, 10, 11, 5}; // LED pins
+int cycles[] = {0, 0, 0, 0}; // The initial level of the light
+int times[] = {1, 1, 1, 1}; 
+bool flags[] = {false, false, false, false};
+int increments[] = {0, 0, 0, 0};
+int modders[] = {64, 64, 64, 64};
+
+int timer = 0;
+int timerMax = 500;
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  Serial.println("ok");
-
-  pinMode(ledR,   OUTPUT);
-  pinMode(ledG, OUTPUT);   
-  pinMode(ledB,  OUTPUT); 
-
-
+  pinMode(leds[RED],   OUTPUT);
+  pinMode(leds[GREEN], OUTPUT);   
+  pinMode(leds[BLUE],  OUTPUT); 
+  pinMode(leds[YELLOW],  OUTPUT);
+  setOcean();
   AFMS.begin();  // create with the default frequency 1.6KHz
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   readInput();
-  analogWrite(ledR, rCycle);
-  analogWrite(ledG, gCycle);
-  analogWrite(ledB, bCycle);
+  analogWrite(leds[RED], cycles[RED]);
+  analogWrite(leds[GREEN], cycles[GREEN]);
+  analogWrite(leds[BLUE], cycles[BLUE]);
+  analogWrite(leds[YELLOW], cycles[YELLOW]);
 
-  rCycle = (rCycle + 2) % 256;
-  gCycle = (gCycle + 3) % 256;
-  bCycle = (bCycle + 1) % 256;
+  if (timer >= timerMax) {
+    timer = 0;
+  } else {
+    timer++;
+  }
+
+  for (int i = 0; i < numLeds; i++) {
+    if (flags[i] || !(timer % times[i])) {
+      flags[i] = true;
+      cycles[i] = (cycles[i] + increments[i]) % modders[i];
+      if (!cycles[i]) {
+        flags[i] = false;
+      }
+    }
+  }
 
   delay(10);
 }
 
+void resetLights() {
+  for (int i = 0; i < numLeds; i++) {
+    cycles[i] = 0;
+  }
+
+  for (int i = 0; i < numLeds; i++) {
+    times[i] = 1;
+  }
+
+  for (int i = 0; i < numLeds; i++) {
+    increments[i] = 0;
+  }
+
+  for (int i = 0; i < numLeds; i++) {
+    modders[i] = 64;
+  }
+}
+
+void setJungle() {
+  resetLights();
+  cycles[BLUE] = 5;
+  cycles[GREEN] = 255;
+  times[YELLOW] = 350; 
+  increments[GREEN] = 1;
+  increments[YELLOW] = 3;
+  modders[GREEN] = 256;
+}
+
+void setOcean() {
+  resetLights();
+  cycles[BLUE] = 15;
+  cycles[GREEN] = 15;
+  times[RED] = 350;
+  times[YELLOW] = 220; 
+  increments[YELLOW] = 3;
+  increments[RED] = 3;
+}
 
 void readInput() {
     bool on = analogRead(inPin) > 400;
