@@ -5,37 +5,35 @@
 	<link rel='stylesheet' href='index.css'/>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css"/>
 	<script src="https://cdn.firebase.com/js/client/2.3.1/firebase.js"></script>
+	<script src="js/nipplejs.min.js"></script>
 </head>
 <body>
-	<div id='vcenter1'>
-		<div id='vcenter2'>
-			<div id='vcenter3'>
-				<table id='controls'>
-					<tr>
-						<td></td>
-						<td><div class='button' onClick='setNum(1)'><i class="fa fa-arrow-up"></i></div></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td><div class='button' onClick='setNum(2)'><i class="fa fa-arrow-left"></i></div></td>
-						<td></td>
-						<td><div class='button' onClick='setNum(3)'><i class="fa fa-arrow-right"></i></div></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td><div class='button' onClick='setNum(4)'><i class="fa fa-hand-paper-o"></i></div></td>
-						<td></td>
-					</tr>
-				</table>
-			</div>
-		</div>
+	<div id="nipple">
 	</div>
 	<script>
-	var firebase = new Firebase("https://teryntherobot.firebaseio.com/");
-	var direction = firebase.child("direction");
-	function setNum(n) {
-		direction.set(n);
-	}
+		directionMap = {
+			up: 1,
+			down: 4,
+			left: 2,
+			right: 3
+		}
+		
+		var nipple = nipplejs.create({
+			zone: document.getElementById('nipple'),
+			mode: 'static',
+			position: {left: '50%', top: '50%'},
+			color: 'red',
+			restOpacity: .2,
+			multitouch: false
+		});
+		nipple.on("dir", function(evt, data) {
+			setNum(directionMap(data.direction.angle));
+		});
+		var firebase = new Firebase("https://teryntherobot.firebaseio.com/");
+		var direction = firebase.child("direction");
+		function setNum(n) {
+			direction.set(n);
+		}
 	</script>
 </body>
 </html>
