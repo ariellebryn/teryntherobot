@@ -27,7 +27,7 @@
 			multitouch: false
 		});
 		nipple.on("dir", function(evt, data) {
-			setNum(directionMap(data.direction.angle));
+			setNum(directionMap[data.direction.angle]);
 		});
 		var firebase = new Firebase("https://teryntherobot.firebaseio.com/");
 		var direction = firebase.child("direction");
